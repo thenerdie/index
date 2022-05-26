@@ -4,18 +4,19 @@ const body = document.querySelector('html')
 
 let user
 let platform
+let animate
 
 let averageVolume
 
 let colors = {
-    "Bronze": "#CD7F32",
-    "Silver": "#C0C0C0",
-    "Gold": "#FFD700",
-    "Platinum": "#4890b8",
+    "Bronze": "#5c4300",
+    "Silver": "#636363",
+    "Gold": "#806401",
+    "Platinum": "#6f9b9e",
     "Diamond": "#0b3373",
     "Champion": "#370542",
     "Grand Champion": "#75060d",
-    "Supersonic Legend": "#e3dcdd"
+    "Supersonic Legend": "#b1aab3"
 }
 
 function getAverageVolume(audioData) {
@@ -29,6 +30,9 @@ function getAverageVolume(audioData) {
 }
 
 function audioListener(audioData) {
+    if (!animate)
+        return
+
     averageVolume = getAverageVolume(audioData)
 
     rankImage.style.width = `${40 + (averageVolume * 7)}%`
@@ -61,7 +65,7 @@ function createParticle() {
 }
 
 function handleParticles() {
-    if (averageVolume > 0.1) {
+    if (averageVolume > 0.1 && animate) {
         for (let i = 0; i < (averageVolume * 100) / 5; i++)
             createParticle()
     }
@@ -87,8 +91,9 @@ async function main() {
     rankText.textContent = `${highest.playlist} ● ${highest.rank} ● ${highest.mmr} MMR`
     rankImage.src = highest.icon
 
-    // extract first words from rank name excluding I, II, and III
-    const rankName = highest.rank.split(" ").slice(0, -1).join(" ")
+    const regex = new RegExp("(.+)[^ I| II| III]")
+
+    const [ rankName ] = regex.exec(highest.rank)
 
     body.style.backgroundColor = colors[rankName]
 }
@@ -101,6 +106,10 @@ window.wallpaperPropertyListener = {
 
         if (properties.platform) {
             platform = properties.platform.value
+        }
+
+        if (properties.animate) {
+            animate = properties.animate.value
         }
 
         main()

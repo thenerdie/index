@@ -5,6 +5,14 @@
 	{
 		"properties" : 
 		{
+			"animate" : 
+			{
+				"index" : 2,
+				"order" : 102,
+				"text" : "animate",
+				"type" : "bool",
+				"value" : true
+			},
 			"platform" : 
 			{
 				"index" : 1,
@@ -32,7 +40,7 @@
 		"supportsaudioprocessing" : true
 	},
 	"title" : "index",
-	"type" : "Web",
+	"type" : "web",
 	"version" : 0,
 	"visibility" : "public"
 }
