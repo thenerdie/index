@@ -1,11 +1,70 @@
 const rankText = document.getElementById('rank-text');
 const rankImage = document.getElementById('rank-img');
+const body = document.querySelector('html')
 
 let user
 let platform
 
+let averageVolume
+
+let colors = {
+    "Bronze": "#CD7F32",
+    "Silver": "#C0C0C0",
+    "Gold": "#FFD700",
+    "Platinum": "#4890b8",
+    "Diamond": "#0b3373",
+    "Champion": "#370542",
+    "Grand Champion": "#75060d",
+    "Supersonic Legend": "#e3dcdd"
+}
+
+function getAverageVolume(audioData) {
+    let total = 0
+
+    audioData.forEach(element => {
+        total += element
+    })
+
+    return total / audioData.length
+}
+
 function audioListener(audioData) {
+    averageVolume = getAverageVolume(audioData)
+
+    rankImage.style.width = `${40 + (averageVolume * 7)}%`
+    rankText.style.transform = `translateY(${-averageVolume * 150}%)`
+    rankText.style.fontSize = `${40 + (averageVolume * 5)}px`
+}
+
+function createParticle() {
+    const particle = document.createElement("particle")
+
+    document.body.appendChild(particle)
+
+    const x = (window.innerWidth / 2) + (Math.random() - 0.5) * 300;
+    const y = Math.random() * 300 + 200;
+    const destinationX = (Math.random() - 0.5) * 600 * (averageVolume + 1);
+    const destinationY = (Math.random() - 0.5) * 300 * (averageVolume + 1);
     
+    particle.style.width = particle.style.height = `${10}px`;
+    const animation = particle.animate([
+        { transform: `translate(${x}px, ${y}px)`, opacity: 0.75 },
+        { transform: `translate(${x + destinationX}px, ${y + destinationY}px)`, opacity: 0 },
+    ], {
+        duration: 2000,
+        easing: "cubic-bezier(0, .9, .57, 1)"
+    })
+
+    animation.onfinish = () => {
+        particle.remove()
+    }
+}
+
+function handleParticles() {
+    if (averageVolume > 0.1) {
+        for (let i = 0; i < (averageVolume * 100) / 5; i++)
+            createParticle()
+    }
 }
 
 async function main() {
@@ -20,13 +79,18 @@ async function main() {
             const mmr = element.stats.rating.value
 
             if (highest ? mmr > highest.mmr : true) {
-                highest = { mmr: mmr, icon: element.stats.tier.metadata.iconUrl, rank: element.stats.tier.metadata.name }
+                highest = { mmr: mmr, icon: element.stats.tier.metadata.iconUrl, rank: element.stats.tier.metadata.name, playlist: element.metadata.name }
             }
         }
     })
 
-    rankText.textContent = `${highest.rank} ● ${highest.mmr} MMR`
+    rankText.textContent = `${highest.playlist} ● ${highest.rank} ● ${highest.mmr} MMR`
     rankImage.src = highest.icon
+
+    // extract first words from rank name excluding I, II, and III
+    const rankName = highest.rank.split(" ").slice(0, -1).join(" ")
+
+    body.style.backgroundColor = colors[rankName]
 }
 
 window.wallpaperPropertyListener = {
@@ -46,3 +110,4 @@ window.wallpaperPropertyListener = {
 window.wallpaperRegisterAudioListener(audioListener);
 
 setInterval(main, 300000)
+setInterval(handleParticles, 30)
