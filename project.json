@@ -1,5 +1,6 @@
 {
-	"description" : "",
+	"contentrating" : "Everyone",
+	"description" : "Shows your highest Rocket League competitive rank, and animates to your computer audio!",
 	"file" : "index.html",
 	"general" : 
 	{
@@ -7,18 +8,41 @@
 		{
 			"animate" : 
 			{
-				"index" : 2,
-				"order" : 102,
+				"index" : 1,
+				"order" : 101,
 				"text" : "animate",
 				"type" : "bool",
 				"value" : true
 			},
 			"platform" : 
 			{
-				"index" : 1,
-				"order" : 101,
+				"index" : 2,
+				"options" : 
+				[
+					{
+						"label" : "Epic Games",
+						"value" : "epic"
+					},
+					{
+						"label" : "Steam",
+						"value" : "steam"
+					},
+					{
+						"label" : "Xbox",
+						"value" : "xbl"
+					},
+					{
+						"label" : "PlayStation Network",
+						"value" : "psn"
+					},
+					{
+						"label" : "Switch",
+						"value" : "switch"
+					}
+				],
+				"order" : 102,
 				"text" : "platform",
-				"type" : "textinput",
+				"type" : "combo",
 				"value" : "epic"
 			},
 			"schemecolor" : 
@@ -39,8 +63,10 @@
 		},
 		"supportsaudioprocessing" : true
 	},
-	"title" : "index",
-	"type" : "web",
+	"preview" : "preview.jpg",
+	"tags" : [ "Game" ],
+	"title" : "Rocket League Stats",
+	"type" : "Web",
 	"version" : 0,
 	"visibility" : "public"
 }
