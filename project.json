@@ -66,7 +66,9 @@
 	"preview" : "preview.jpg",
 	"tags" : [ "Game" ],
 	"title" : "Rocket League Stats",
-	"type" : "Web",
-	"version" : 0,
-	"visibility" : "public"
+	"type" : "web",
+	"version" : 1,
+	"visibility" : "public",
+	"workshopid" : "2813076283",
+	"workshopurl" : "steam://url/CommunityFilePage/2813076283"
 }

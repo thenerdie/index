@@ -19,6 +19,13 @@ let colors = {
     "Supersonic Legend": "#b1aab3"
 }
 
+let divisionToNumber = {
+    "Division I": 1,
+    "Division II": 2,
+    "Division III": 3,
+    "Division IV": 4
+}
+
 function getAverageVolume(audioData) {
     let total = 0
 
@@ -30,8 +37,12 @@ function getAverageVolume(audioData) {
 }
 
 function audioListener(audioData) {
-    if (!animate)
+    if (!animate) {
+        rankImage.style.width = `40%`
+        rankText.style.transform = `translateY(0%)`
+        rankText.style.fontSize = `40px`
         return
+    }
 
     averageVolume = getAverageVolume(audioData)
 
@@ -72,7 +83,7 @@ function handleParticles() {
 }
 
 async function main() {
-    const data = await fetch(`https://api.tracker.gg/api/v2/rocket-league/standard/profile/${platform}/${user}`).then(res => res.json());
+    const data = await fetch(`https://api.tracker.gg/api/v2/rocket-league/standard/profile/${platform}/${user}`).then(res => res.json()).catch(() => setTimeout(main, 10000));
 
     const playlists = data.data.segments.filter(segment => segment.type == "playlist")
 
@@ -83,17 +94,27 @@ async function main() {
             const mmr = element.stats.rating.value
 
             if (highest ? mmr > highest.mmr : true) {
-                highest = { mmr: mmr, icon: element.stats.tier.metadata.iconUrl, rank: element.stats.tier.metadata.name, playlist: element.metadata.name }
+                highest = { mmr: mmr, icon: element.stats.tier.metadata.iconUrl, rank: element.stats.tier.metadata.name, division: element.stats.division.metadata.name, playlist: element.metadata.name }
             }
         }
     })
 
-    rankText.textContent = `${highest.playlist} ● ${highest.rank} ● ${highest.mmr} MMR`
-    rankImage.src = highest.icon
-
     const regex = new RegExp("(.+)[^ I| II| III]")
-
     const [ rankName ] = regex.exec(highest.rank)
+    
+    if (highest.rank != "Supersonic Legend") {
+        const division = []
+
+        for (let i = 0; i < 4; i++) {
+            division.push(i < divisionToNumber[highest.division] ? `<span class="alt-code">&#9632;</span>` : `<span class="alt-code">&#9633;</span>`)
+        }
+        
+        rankText.innerHTML = `${highest.playlist} ● ${highest.rank} ${division.join("")} ● ${highest.mmr} MMR`
+    } else {
+        rankText.innerHTML = `${highest.playlist} ● ${highest.rank} ● ${highest.mmr} MMR`
+    }
+
+    rankImage.src = highest.icon
 
     body.style.backgroundColor = colors[rankName]
 }
